@@ -14,6 +14,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,6 +35,7 @@ class OrderControllerTest {
            .andExpect(status().isOk())
 //           .andExpect(jsonPath("$.totalAmount", is(closeTo(new BigDecimal("17.00"), new BigDecimal("0.001")))))
            .andExpect(jsonPath("$.totalAmount", equalTo(17.00))) // TODO il confronto dovrebbe essere fra BigDecimal
+           .andDo(print())
         ;
     }
 
@@ -52,8 +54,10 @@ class OrderControllerTest {
     void viewOrderTest() throws Exception {
 
         mvc.perform(get(url + "/checkout").with(httpBasic("rossi@email.com", "rossi")))
-//           .andExpect(model().attribute("customer", hasProperty("username", equalTo("rossi@email.com"))))
-           .andExpect(status().isOk());
+           .andExpect(jsonPath("$.username", equalTo("rossi@email.com")))
+           .andExpect(status().isOk())
+           .andDo(print())
+        ;
     }
 
     @Disabled
